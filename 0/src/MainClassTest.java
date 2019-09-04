@@ -10,4 +10,11 @@ public class MainClassTest {
                         "Результат: " + mainClass.getLocalNumber() + "\n",
                 14, mainClass.getLocalNumber());
     }
+
+    @Test
+    public void testGetClassNumber(){
+        MainClass mainClass = new MainClass();
+        Assert.assertTrue("Метод getClassNumber вернул число меньше или равное 45",
+                mainClass.getClassNumber() > 45);
+    }
 }
