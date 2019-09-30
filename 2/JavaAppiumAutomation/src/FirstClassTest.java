@@ -79,6 +79,37 @@ public class FirstClassTest {
 
     }
 
+    @Test
+    public void searchTextInResult() {
+        String searchedString = "Java";
+        String searchInputInactiveId = "org.wikipedia:id/search_container";
+        String searchInputInProcessId = "org.wikipedia:id/search_src_text";
+        String searchResultId = "org.wikipedia:id/page_list_item_container";
+        String resultTitleId = "org.wikipedia:id/page_list_item_title";
+
+        waitForElementAndClick(By.id(searchInputInactiveId));
+        waitForElementAndSendKeys(By.id(searchInputInProcessId), searchedString);
+        waitForElementPresent(By.id(searchResultId));
+
+        List<WebElement> articlesList = driver.findElements(By.id(searchResultId));
+        Assert.assertNotEquals(
+                "Amount of articles equal 0. Searched string: " + searchedString, articlesList.size(), 0);
+
+        boolean isAsserted = false;
+        StringBuilder errorString = new StringBuilder();
+        for (WebElement e : articlesList) {
+            WebElement resultTitle = e.findElement(By.id(resultTitleId));
+            String titleText = resultTitle.getAttribute("text");
+
+            if (!titleText.toLowerCase().contains(searchedString.toLowerCase())) {
+                isAsserted = true;
+                errorString.append("String " + searchedString + " was not found in string: " + titleText + "\n");
+            }
+        }
+
+        Assert.assertFalse(errorString.toString(), isAsserted);
+    }
+
     private WebElement waitForElementPresent(By by) {
         return waitForElementPresent(by, "Element " + by.toString() + " not found", 5);
     }
