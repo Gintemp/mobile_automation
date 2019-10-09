@@ -151,4 +151,10 @@ public class BaseTestClass {
                 .release()
                 .perform();
     }
+
+    protected String waitForElementAndGetAttribute(By by, String attribute, String errorMessage, long timeout)
+    {
+        WebElement element = waitForElementPresent(by, errorMessage, timeout);
+        return element.getAttribute(attribute);
+    }
 }
