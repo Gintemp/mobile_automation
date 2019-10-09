@@ -16,7 +16,7 @@ public class BaseTestClass {
     private AppiumDriver driver;
 
     @Before
-    protected void setUp() throws Exception {
+    public void setUp() throws Exception {
         DesiredCapabilities capabilities = new DesiredCapabilities();
         capabilities.setCapability("platformName", "Android");
         capabilities.setCapability("deviceName", "AndroidTestDevice");
@@ -30,7 +30,7 @@ public class BaseTestClass {
     }
 
     @After
-    protected void tearDown() {
+    public void tearDown() {
         driver.quit();
     }
 
@@ -61,6 +61,13 @@ public class BaseTestClass {
     protected WebElement waitForElementAndClick(By by, String errorMessage, long timeout) {
         WebElement element = waitForElementPresent(by, errorMessage, timeout);
         element.click();
+
+        return element;
+    }
+
+    protected WebElement waitForElementAndClear(By by, String errorMessage, long timeout) {
+        WebElement element = waitForElementPresent(by, errorMessage, timeout);
+        element.clear();
 
         return element;
     }
