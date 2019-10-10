@@ -1,12 +1,20 @@
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
+import org.openqa.selenium.ScreenOrientation;
 import org.openqa.selenium.WebElement;
 
 import java.util.List;
 
 public class AdvancedClassTest extends BaseTestClass {
+    @Before
+    public void preparations()
+    {
+        getDriver().rotate(ScreenOrientation.PORTRAIT);
+    }
+
     @Test
     public void saveAndDeleteArticle() {
         String searchedString = "Skyrim";
