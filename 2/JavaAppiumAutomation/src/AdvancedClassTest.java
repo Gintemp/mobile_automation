@@ -1,6 +1,7 @@
 import org.junit.Assert;
 import org.junit.Test;
 import org.openqa.selenium.By;
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
 
 import java.util.List;
@@ -12,7 +13,6 @@ public class AdvancedClassTest extends BaseTestClass {
         By firstArticle = By.xpath("//*[@resource-id='org.wikipedia:id/page_list_item_container']//*[@text='The Elder Scrolls V: Skyrim']");
         String secondArticleTitle = "The Elder Scrolls V: Skyrim – Dawnguard";
         By secondArticle = By.xpath("//*[@resource-id='org.wikipedia:id/page_list_item_container']//*[@text='" + secondArticleTitle + "']");
-        By articleList = By.xpath("//*[@resource-id='org.wikipedia:id/page_list_item_container']//*[contains(@text, 'The Elder Scrolls V')]");
         String listTitle = "Tests for Nords";
         By listTitleXpath = By.xpath("//*[@text='" + listTitle + "']");
         By searchInputInactiveId = By.xpath("//*[@resource-id='org.wikipedia:id/search_container']");
@@ -71,5 +71,30 @@ public class AdvancedClassTest extends BaseTestClass {
         String attrValue = waitForElementAndGetAttribute(articleTitle, "text",
                 "Could not find article by xpath " + articleTitle.toString(), 5);
         Assert.assertEquals("Expected title string is not equal to real", secondArticleTitle, attrValue);
+    }
+
+    @Test
+    public void assertElementPresent()
+    {
+        String searchedString = "Skyrim";
+        By articleInSearch = By.xpath("//*[@resource-id='org.wikipedia:id/page_list_item_container']//*[@text='The Elder Scrolls V: Skyrim']");
+        By articleTitle = By.xpath("//*[@resource-id='org.wikipedia:id/view_page_title_text']");
+        By searchInputInactiveId = By.xpath("//*[@resource-id='org.wikipedia:id/search_container']");
+        By searchInputInProcessId = By.xpath("//*[@resource-id='org.wikipedia:id/search_src_text']");
+        By searchResultId = By.xpath("//*[@resource-id='org.wikipedia:id/page_list_item_container']");
+
+        waitForElementAndClick(searchInputInactiveId);
+        waitForElementAndSendKeys(searchInputInProcessId, searchedString);
+        waitForElementPresent(searchResultId);
+        waitForElementAndClick(articleInSearch,
+                "Could not find searched article: " +articleInSearch.toString() , 10);
+        WebElement element;
+        try {
+            element = getDriver().findElement(articleTitle);
+            Assert.assertTrue("Title of article not found", element.isDisplayed());
+        }catch (NoSuchElementException e)
+        {
+            Assert.fail("Title of article was not found");
+        }
     }
 }
