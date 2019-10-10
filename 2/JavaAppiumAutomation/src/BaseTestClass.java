@@ -55,6 +55,14 @@ public class BaseTestClass {
         );
     }
 
+    protected WebElement waitForElementExists(By by, String errorMessage, long timeout) {
+        WebDriverWait driverWait = new WebDriverWait(getDriver(), timeout);
+        driverWait.withMessage(errorMessage + "\n");
+        return driverWait.until(
+                ExpectedConditions.presenceOfElementLocated(by)
+        );
+    }
+
     protected WebElement waitForElementAndClick(By by) {
         return waitForElementAndClick(by, "Element " + by.toString() + " not found", 5);
     }
@@ -95,6 +103,15 @@ public class BaseTestClass {
                 ExpectedConditions.invisibilityOfElementLocated(by)
         );
     }
+
+    protected boolean checkElementVisibility(By by) {
+        WebDriverWait driverWait = new WebDriverWait(getDriver(), 10);
+        return getDriver().findElement(by).isDisplayed();
+
+    }
+
+
+
 
     protected void swipeUp(int timeOfSwipe) {
         TouchAction action = new TouchAction(getDriver());
@@ -154,7 +171,7 @@ public class BaseTestClass {
         TouchAction action = new TouchAction(getDriver());
         action
                 .press(rightX, middleY)
-                .waitAction(300)
+                .waitAction(400)
                 .moveTo(leftX, middleY)
                 .release()
                 .perform();

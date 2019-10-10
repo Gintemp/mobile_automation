@@ -11,8 +11,8 @@ public class AdvancedClassTest extends BaseTestClass {
         String searchedString = "Skyrim";
         By firstArticle = By.xpath("//*[@resource-id='org.wikipedia:id/page_list_item_container']//*[@text='The Elder Scrolls V: Skyrim']");
         String secondArticleTitle = "The Elder Scrolls V: Skyrim – Dawnguard";
-        By secondArticle = By.xpath("//*[@resource-id='org.wikipedia:id/page_list_item_container']//*[@text='"+ secondArticleTitle +"']");
-        By articleList = By.xpath("//*[@resource-id='org.wikipedia:id/page_list_item_container']//*[contains(@text, 'Skyrim')]");
+        By secondArticle = By.xpath("//*[@resource-id='org.wikipedia:id/page_list_item_container']//*[@text='" + secondArticleTitle + "']");
+        By articleList = By.xpath("//*[@resource-id='org.wikipedia:id/page_list_item_container']//*[contains(@text, 'The Elder Scrolls V')]");
         String listTitle = "Tests for Nords";
         By listTitleXpath = By.xpath("//*[@text='" + listTitle + "']");
         By searchInputInactiveId = By.xpath("//*[@resource-id='org.wikipedia:id/search_container']");
@@ -26,6 +26,7 @@ public class AdvancedClassTest extends BaseTestClass {
         By crossButton = By.xpath("//android.widget.ImageButton[@content-desc='Navigate up']");
         By myListsTab = By.xpath("//android.widget.FrameLayout[@content-desc='My lists']");
         By createListButton = By.xpath("//*[@resource-id='org.wikipedia:id/create_button']");
+        By articleTitle = By.xpath("//*[@resource-id='org.wikipedia:id/view_page_title_text']");
 
         //first article
         waitForElementAndClick(searchInputInactiveId);
@@ -35,12 +36,12 @@ public class AdvancedClassTest extends BaseTestClass {
         List<WebElement> articlesList = getDriver().findElements(searchResultId);
         Assert.assertNotEquals("Amount of articles equal 0. Searched string: " + searchedString,
                 articlesList.size(), 0);
-        waitForElementAndClick(firstArticle);
-        waitForElementAndClick(moreOptionsButtonId, "Could not find More Options button", 5);
-        waitForElementAndClick(addToReadingListOptionText, "Could not find Add to list option", 5);
+        waitForElementAndClick(firstArticle, "Could not find first article", 10);
+        waitForElementPresent(articleTitle);
+        waitForElementAndClick(moreOptionsButtonId, "Could not find More Options button", 10);
+        waitForElementAndClick(addToReadingListOptionText, "Could not find Add to list option", 10);
 
-        WebElement gotItButton = getDriver().findElement(gotItButtonId);
-        if (gotItButton.isDisplayed()) {
+        if (checkElementVisibility(gotItButtonId)) {
             waitForElementAndClick(gotItButtonId, "Could not find GOT IT button.", 5);
         } else {
             waitForElementAndClick(createListButton, "Could not find Create new list button.", 5);
@@ -48,27 +49,27 @@ public class AdvancedClassTest extends BaseTestClass {
         waitForElementAndClear(newListTitleInputId, "Could not find input field of new title", 5);
         waitForElementAndSendKeys(newListTitleInputId, listTitle);
         waitForElementAndClick(confirmNewListTitleButton);
-        waitForElementAndClick(crossButton, "Cannot close article by X link", 5);
+        waitForElementAndClick(crossButton, "Cannot close article by X link", 10);
 
         //second article
         waitForElementAndClick(searchInputInactiveId);
         waitForElementAndSendKeys(searchInputInProcessId, searchedString);
         waitForElementPresent(searchResultId);
-        waitForElementAndClick(secondArticle);
-        waitForElementAndClick(moreOptionsButtonId, "Could not find More Options button", 5);
-        waitForElementAndClick(addToReadingListOptionText, "Could not find Add to list option", 5);
+        waitForElementAndClick(secondArticle, "Could not find second article", 10);
+        waitForElementPresent(articleTitle);
+        waitForElementAndClick(moreOptionsButtonId, "Could not find More Options button", 10);
+        waitForElementAndClick(addToReadingListOptionText, "Could not find Add to list option", 10);
         waitForElementAndClick(listTitleXpath);
-        waitForElementAndClick(crossButton, "Cannot close article by X link", 5);
+        waitForElementAndClick(crossButton, "Cannot close article by X link", 10);
 
         //open My Lists
         waitForElementAndClick(myListsTab);
         waitForElementAndClick(listTitleXpath);
-        List<WebElement> listOfArticles = getDriver().findElements(articleList);
-        Assert.assertEquals("Amount of articles not equal 2", 2, listOfArticles.size());
         swipeElementToLeft(firstArticle, "Cannot delete article " + firstArticle.toString());
-        listOfArticles = getDriver().findElements(articleList);
-        Assert.assertEquals("Amount of articles not equal 1 after delete", 1, listOfArticles.size());
+        waitForElementNotPresent(firstArticle, "Could not delete first article", 10);
         waitForElementAndClick(secondArticle);
-        // waitForElementAndGetAttribute("title")
+        String attrValue = waitForElementAndGetAttribute(articleTitle, "text",
+                "Could not find article by xpath " + articleTitle.toString(), 5);
+        Assert.assertEquals("Expected title string is not equal to real", secondArticleTitle, attrValue);
     }
 }
