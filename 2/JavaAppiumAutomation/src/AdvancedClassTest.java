@@ -10,7 +10,9 @@ public class AdvancedClassTest extends BaseTestClass {
     public void saveAndDeleteArticle() {
         String searchedString = "Skyrim";
         By firstArticle = By.xpath("//*[@resource-id='org.wikipedia:id/page_list_item_container']//*[@text='The Elder Scrolls V: Skyrim']");
-        By secondArticle = By.xpath("//*[@resource-id='org.wikipedia:id/page_list_item_container']//*[@text='The Elder Scrolls V: Skyrim – Dawnguard']");
+        String secondArticleTitle = "The Elder Scrolls V: Skyrim – Dawnguard";
+        By secondArticle = By.xpath("//*[@resource-id='org.wikipedia:id/page_list_item_container']//*[@text='"+ secondArticleTitle +"']");
+        By articleList = By.xpath("//*[@resource-id='org.wikipedia:id/page_list_item_container']//*[contains(@text, 'Skyrim')]");
         String listTitle = "Tests for Nords";
         By listTitleXpath = By.xpath("//*[@text='" + listTitle + "']");
         By searchInputInactiveId = By.xpath("//*[@resource-id='org.wikipedia:id/search_container']");
@@ -25,6 +27,7 @@ public class AdvancedClassTest extends BaseTestClass {
         By myListsTab = By.xpath("//android.widget.FrameLayout[@content-desc='My lists']");
         By createListButton = By.xpath("//*[@resource-id='org.wikipedia:id/create_button']");
 
+        //first article
         waitForElementAndClick(searchInputInactiveId);
         waitForElementAndSendKeys(searchInputInProcessId, searchedString);
         waitForElementPresent(searchResultId);
@@ -38,19 +41,34 @@ public class AdvancedClassTest extends BaseTestClass {
 
         WebElement gotItButton = getDriver().findElement(gotItButtonId);
         if (gotItButton.isDisplayed()) {
-            waitForElementAndClick(gotItButtonId);
+            waitForElementAndClick(gotItButtonId, "Could not find GOT IT button.", 5);
         } else {
-            //ToDo: create new list
+            waitForElementAndClick(createListButton, "Could not find Create new list button.", 5);
         }
         waitForElementAndClear(newListTitleInputId, "Could not find input field of new title", 5);
         waitForElementAndSendKeys(newListTitleInputId, listTitle);
         waitForElementAndClick(confirmNewListTitleButton);
         waitForElementAndClick(crossButton, "Cannot close article by X link", 5);
+
+        //second article
+        waitForElementAndClick(searchInputInactiveId);
+        waitForElementAndSendKeys(searchInputInProcessId, searchedString);
+        waitForElementPresent(searchResultId);
+        waitForElementAndClick(secondArticle);
+        waitForElementAndClick(moreOptionsButtonId, "Could not find More Options button", 5);
+        waitForElementAndClick(addToReadingListOptionText, "Could not find Add to list option", 5);
+        waitForElementAndClick(listTitleXpath);
+        waitForElementAndClick(crossButton, "Cannot close article by X link", 5);
+
+        //open My Lists
         waitForElementAndClick(myListsTab);
         waitForElementAndClick(listTitleXpath);
-
-        //ToDo: add second article
+        List<WebElement> listOfArticles = getDriver().findElements(articleList);
+        Assert.assertEquals("Amount of articles not equal 2", 2, listOfArticles.size());
         swipeElementToLeft(firstArticle, "Cannot delete article " + firstArticle.toString());
+        listOfArticles = getDriver().findElements(articleList);
+        Assert.assertEquals("Amount of articles not equal 1 after delete", 1, listOfArticles.size());
+        waitForElementAndClick(secondArticle);
+        // waitForElementAndGetAttribute("title")
     }
-
 }
