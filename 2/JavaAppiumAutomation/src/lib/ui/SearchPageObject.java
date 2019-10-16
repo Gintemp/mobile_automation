@@ -9,7 +9,7 @@ public class SearchPageObject extends MainPageObject {
         SEARCH_INPUT = "org.wikipedia:id/search_src_text",
         SEARCH_RESULT = "org.wikipedia:id/page_list_item_container",
         SEARCH_RESULT_BY_SUBSTRING_TPL = "//*[@resource-id='org.wikipedia:id/page_list_item_container']//*[@text='{SUBSTRING}']",
-        SEARCH_CANCEL = "org.wikipedia:id/search_close_btn";
+        SEARCH_CANCEL_BUTTON = "org.wikipedia:id/search_close_btn";
 
     public SearchPageObject(AppiumDriver driver)
     {
@@ -44,10 +44,25 @@ public class SearchPageObject extends MainPageObject {
         this.waitForElementPresent(By.id(SEARCH_RESULT), "Cannot find search result");
     }
 
-    public void waitForSearchResult(String subString)
+    public void clickByArticleWithSubstring(String subString)
     {
         String searchResultXpath = getResultSearchElement(subString);
-        this.waitForElementPresent(By.xpath(searchResultXpath),
-                "Cannot find search result with substring " + subString);
+        this.waitForElementAndClick(By.xpath(searchResultXpath),
+                "Cannot find and click search result with substring " + subString, 10);
+    }
+
+    public void waitForCancelButtonToAppear()
+    {
+        this.waitForElementPresent(By.id(SEARCH_CANCEL_BUTTON), "Cannot find search cancel button", 5);
+    }
+
+    public void waitForCancelButtonToDisappear()
+    {
+        this.waitForElementNotPresent(By.id(SEARCH_CANCEL_BUTTON), "Found search cancel button", 5);
+    }
+
+    public void clickCancelSearch()
+    {
+        this.waitForElementAndClick(By.id(SEARCH_CANCEL_BUTTON), "Cannot find and click search cancel button", 5);
     }
 }
