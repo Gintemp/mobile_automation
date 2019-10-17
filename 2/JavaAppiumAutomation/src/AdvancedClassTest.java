@@ -88,13 +88,11 @@ public class AdvancedClassTest extends BaseTestClass {
         waitForElementPresent(searchResultId);
         waitForElementAndClick(articleInSearch,
                 "Could not find searched article: " +articleInSearch.toString() , 10);
-        WebElement element;
-        try {
-            element = getDriver().findElement(articleTitle);
-            Assert.assertTrue("Title of article not found", element.isDisplayed());
-        }catch (NoSuchElementException e)
-        {
-            Assert.fail("Title of article was not found");
-        }
+        assertElementPresent(articleTitle);
+    }
+
+    private void assertElementPresent(By by)
+    {
+        waitForElementPresent(by, "Cannot find title article", 0);
     }
 }
