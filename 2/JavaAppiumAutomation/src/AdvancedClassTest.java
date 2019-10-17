@@ -104,6 +104,5 @@ public class AdvancedClassTest extends BaseTestClass {
             String defaultMessage = "An element supposed to have one title\n";
             throw new AssertionError(defaultMessage + " " + errorMessage);
         }
-        Assert.assertEquals(errorMessage, amountOfSearch, 0);
     }
 }
