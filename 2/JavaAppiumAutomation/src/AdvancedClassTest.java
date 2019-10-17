@@ -88,11 +88,22 @@ public class AdvancedClassTest extends BaseTestClass {
         waitForElementPresent(searchResultId);
         waitForElementAndClick(articleInSearch,
                 "Could not find searched article: " +articleInSearch.toString() , 10);
-        assertElementPresent(articleTitle);
+        assertElementPresent(articleTitle, "Could not find title error");
     }
 
-    private void assertElementPresent(By by)
+    public int getAmountOfElements(By by)
     {
-        waitForElementPresent(by, "Cannot find title article", 0);
+        return getDriver().findElements(by).size();
+    }
+
+    public void assertElementPresent(By by, String errorMessage)
+    {
+        int amountOfSearch = getAmountOfElements(by);
+        if(amountOfSearch != 1)
+        {
+            String defaultMessage = "An element supposed to have one title\n";
+            throw new AssertionError(defaultMessage + " " + errorMessage);
+        }
+        Assert.assertEquals(errorMessage, amountOfSearch, 0);
     }
 }
