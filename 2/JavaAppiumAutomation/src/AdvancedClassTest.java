@@ -60,6 +60,6 @@ public class AdvancedClassTest extends CoreTestCase {
         SearchPageObject.clickByArticleWithSubstring(articleInSearch);
 
         ArticlePageObject ArticlePageObject = new ArticlePageObject(driver);
-        assertEquals("", articleInSearch, ArticlePageObject.getArticleTitle());
+        ArticlePageObject.assertTitlePresent();
     }
 }

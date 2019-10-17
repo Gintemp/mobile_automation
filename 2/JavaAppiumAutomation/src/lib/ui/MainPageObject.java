@@ -170,6 +170,15 @@ public class MainPageObject {
             String defaultMessage = "An element " + by.toString() + " suposed to br not present";
             throw new AssertionError(defaultMessage + " " + errorMessage);
         }
-        Assert.assertEquals(errorMessage, amountOfSearch, 0);
+    }
+
+    public void assertElementPresent(By by, String errorMessage)
+    {
+        int amountOfSearch = getAmountOfElements(by);
+        if(amountOfSearch != 1)
+        {
+            String defaultMessage = "An element supposed to have one title\n";
+            throw new AssertionError(defaultMessage + " " + errorMessage);
+        }
     }
 }

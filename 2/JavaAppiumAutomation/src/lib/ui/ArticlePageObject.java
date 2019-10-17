@@ -55,4 +55,8 @@ public class ArticlePageObject extends MainPageObject {
     public void closeArticle() {
         this.waitForElementAndClick(By.xpath(CLOSE_ARTICLE_BUTTON), "Cannot close article by X link", 10);
     }
+
+    public void assertTitlePresent() {
+        assertElementPresent(By.id(TITLE), "Cannot find title in article");
+    }
 }
