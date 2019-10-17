@@ -1,7 +1,6 @@
 import org.junit.Assert;
 import org.junit.Test;
 import org.openqa.selenium.By;
-import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
 
 import java.util.List;
@@ -74,8 +73,7 @@ public class AdvancedClassTest extends BaseTestClass {
     }
 
     @Test
-    public void checkIfArticleHasTitle()
-    {
+    public void checkIfArticleHasTitle() {
         String searchedString = "Skyrim";
         By articleInSearch = By.xpath("//*[@resource-id='org.wikipedia:id/page_list_item_container']//*[@text='The Elder Scrolls V: Skyrim']");
         By articleTitle = By.xpath("//*[@resource-id='org.wikipedia:id/view_page_title_text']");
@@ -87,20 +85,17 @@ public class AdvancedClassTest extends BaseTestClass {
         waitForElementAndSendKeys(searchInputInProcessId, searchedString);
         waitForElementPresent(searchResultId);
         waitForElementAndClick(articleInSearch,
-                "Could not find searched article: " +articleInSearch.toString() , 10);
+                "Could not find searched article: " + articleInSearch.toString(), 10);
         assertElementPresent(articleTitle, "Could not find title error");
     }
 
-    public int getAmountOfElements(By by)
-    {
+    public int getAmountOfElements(By by) {
         return getDriver().findElements(by).size();
     }
 
-    public void assertElementPresent(By by, String errorMessage)
-    {
+    public void assertElementPresent(By by, String errorMessage) {
         int amountOfSearch = getAmountOfElements(by);
-        if(amountOfSearch != 1)
-        {
+        if (amountOfSearch != 1) {
             String defaultMessage = "An element supposed to have one title\n";
             throw new AssertionError(defaultMessage + " " + errorMessage);
         }
