@@ -46,4 +46,12 @@ public class MyListsPageObject extends MainPageObject {
     {
         this.waitForElementPresent(By.xpath(getSavedArticleXpathByTitle(articleTitle)), "Cannot find saved article by title " + articleTitle, 15);
     }
+
+    public void openArticle(String articleTitle)
+    {
+        this.waitForElementAndClick(
+                By.xpath(getSavedArticleXpathByTitle(articleTitle)),
+                "Cannot open article " + articleTitle + " in list",
+                15);
+    }
 }

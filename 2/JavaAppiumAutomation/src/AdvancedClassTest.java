@@ -1,108 +1,65 @@
 import lib.CoreTestCase;
-import lib.ui.MainPageObject;
-import org.junit.Before;
+import lib.ui.ArticlePageObject;
+import lib.ui.MyListsPageObject;
+import lib.ui.NavigationUI;
+import lib.ui.SearchPageObject;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
-import org.openqa.selenium.ScreenOrientation;
 import org.openqa.selenium.WebElement;
 
-import java.util.List;
-
 public class AdvancedClassTest extends CoreTestCase {
-    private lib.ui.MainPageObject MainPageObject;
-
-    protected void setUp() throws Exception {
-        super.setUp();
-        MainPageObject = new MainPageObject(driver);
-    }
 
     @Test
     public void testSaveAndDeleteArticle() {
         String searchedString = "Skyrim";
-        By firstArticle = By.xpath("//*[@resource-id='org.wikipedia:id/page_list_item_container']//*[@text='The Elder Scrolls V: Skyrim']");
-        String secondArticleTitle = "The Elder Scrolls V: Skyrim – Dawnguard";
-        By secondArticle = By.xpath("//*[@resource-id='org.wikipedia:id/page_list_item_container']//*[@text='" + secondArticleTitle + "']");
         String listTitle = "Tests for Nords";
-        By listTitleXpath = By.xpath("//*[@text='" + listTitle + "']");
-        By searchInputInactiveId = By.xpath("//*[@resource-id='org.wikipedia:id/search_container']");
-        By searchInputInProcessId = By.xpath("//*[@resource-id='org.wikipedia:id/search_src_text']");
-        By searchResultId = By.xpath("//*[@resource-id='org.wikipedia:id/page_list_item_container']");
-        By moreOptionsButtonId = By.xpath("//android.widget.ImageView[@content-desc='More options']");
-        By addToReadingListOptionText = By.xpath("//*[@text='Add to reading list']");
-        By gotItButtonId = By.xpath("//*[@resource-id='org.wikipedia:id/onboarding_button']");
-        By newListTitleInputId = By.xpath("//*[@resource-id='org.wikipedia:id/text_input']");
-        By confirmNewListTitleButton = By.xpath("//*[@text='OK']");
-        By crossButton = By.xpath("//android.widget.ImageButton[@content-desc='Navigate up']");
-        By myListsTab = By.xpath("//android.widget.FrameLayout[@content-desc='My lists']");
-        By createListButton = By.xpath("//*[@resource-id='org.wikipedia:id/create_button']");
-        By articleTitle = By.xpath("//*[@resource-id='org.wikipedia:id/view_page_title_text']");
+        String firstArticleTitle = "The Elder Scrolls V: Skyrim";
+        String secondArticleTitle = "The Elder Scrolls V: Skyrim – Dawnguard";
 
         //first article
-        MainPageObject.waitForElementAndClick(searchInputInactiveId);
-        MainPageObject.waitForElementAndSendKeys(searchInputInProcessId, searchedString);
-        MainPageObject.waitForElementPresent(searchResultId);
-
-        List<WebElement> articlesList = driver.findElements(searchResultId);
-        assertNotSame("Amount of articles equal 0. Searched string: " + searchedString,
-                articlesList.size(), 0);
-        MainPageObject.waitForElementAndClick(firstArticle, "Could not find first article", 10);
-        MainPageObject.waitForElementPresent(articleTitle);
-        MainPageObject.waitForElementAndClick(moreOptionsButtonId, "Could not find More Options button", 10);
-        MainPageObject.waitForElementAndClick(addToReadingListOptionText, "Could not find Add to list option", 10);
-
-        if (MainPageObject.checkElementVisibility(gotItButtonId)) {
-            MainPageObject.waitForElementAndClick(gotItButtonId, "Could not find GOT IT button.", 5);
-        } else {
-            MainPageObject.waitForElementAndClick(createListButton, "Could not find Create new list button.", 5);
-        }
-        MainPageObject.waitForElementAndClear(newListTitleInputId, "Could not find input field of new title", 5);
-        MainPageObject.waitForElementAndSendKeys(newListTitleInputId, listTitle);
-        MainPageObject.waitForElementAndClick(confirmNewListTitleButton);
-        MainPageObject.waitForElementAndClick(crossButton, "Cannot close article by X link", 10);
+        SearchPageObject SearchPageObject = new SearchPageObject(driver);
+        ArticlePageObject ArticlePageObject = new ArticlePageObject(driver);
+        SearchPageObject.initSearchInput();
+        SearchPageObject.typeSearchLine(searchedString);
+        SearchPageObject.waitForAnySearchResult();
+        SearchPageObject.clickByArticleWithSubstring(firstArticleTitle);
+        ArticlePageObject.waitForTitleElement();
+        ArticlePageObject.addArticleToMyList(listTitle);
+        ArticlePageObject.closeArticle();
 
         //second article
-        MainPageObject.waitForElementAndClick(searchInputInactiveId);
-        MainPageObject.waitForElementAndSendKeys(searchInputInProcessId, searchedString);
-        MainPageObject.waitForElementPresent(searchResultId);
-        MainPageObject.waitForElementAndClick(secondArticle, "Could not find second article", 10);
-        MainPageObject.waitForElementPresent(articleTitle);
-        MainPageObject.waitForElementAndClick(moreOptionsButtonId, "Could not find More Options button", 10);
-        MainPageObject.waitForElementAndClick(addToReadingListOptionText, "Could not find Add to list option", 10);
-        MainPageObject.waitForElementAndClick(listTitleXpath);
-        MainPageObject.waitForElementAndClick(crossButton, "Cannot close article by X link", 10);
+        SearchPageObject.initSearchInput();
+        SearchPageObject.typeSearchLine(searchedString);
+        SearchPageObject.waitForAnySearchResult();
+        SearchPageObject.clickByArticleWithSubstring("The Elder Scrolls V: Skyrim – Dawnguard");
+        ArticlePageObject.waitForTitleElement();
+        ArticlePageObject.addArticleToMyList(listTitle);
+        ArticlePageObject.closeArticle();
 
         //open My Lists
-        MainPageObject.waitForElementAndClick(myListsTab);
-        MainPageObject.waitForElementAndClick(listTitleXpath);
-        MainPageObject.swipeElementToLeft(firstArticle, "Cannot delete article " + firstArticle.toString());
-        MainPageObject.waitForElementNotPresent(firstArticle, "Could not delete first article", 10);
-        MainPageObject.waitForElementAndClick(secondArticle);
-        String attrValue = MainPageObject.waitForElementAndGetAttribute(articleTitle, "text",
-                "Could not find article by xpath " + articleTitle.toString(), 5);
-        assertEquals("Expected title string is not equal to real", secondArticleTitle, attrValue);
+        NavigationUI NavigationUI = new NavigationUI(driver);
+        NavigationUI.clickMyLists();
+        MyListsPageObject MyListsPageObject = new MyListsPageObject(driver);
+        MyListsPageObject.openFolderByName(listTitle);
+        MyListsPageObject.swipeByArticleToDelete(firstArticleTitle);
+        MyListsPageObject.waitForArticleToDisappear(firstArticleTitle);
+        MyListsPageObject.openArticle(secondArticleTitle);
+        assertEquals("Expected title string is not equal to real", secondArticleTitle, ArticlePageObject.getArticleTitle());
     }
 
     @Test
     public void testAssertElementPresent() {
         String searchedString = "Skyrim";
-        By articleInSearch = By.xpath("//*[@resource-id='org.wikipedia:id/page_list_item_container']//*[@text='The Elder Scrolls V: Skyrim']");
-        By articleTitle = By.xpath("//*[@resource-id='org.wikipedia:id/view_page_title_text']");
-        By searchInputInactiveId = By.xpath("//*[@resource-id='org.wikipedia:id/search_container']");
-        By searchInputInProcessId = By.xpath("//*[@resource-id='org.wikipedia:id/search_src_text']");
-        By searchResultId = By.xpath("//*[@resource-id='org.wikipedia:id/page_list_item_container']");
+        String articleInSearch = "The Elder Scrolls V: Skyrim";
 
-        MainPageObject.waitForElementAndClick(searchInputInactiveId);
-        MainPageObject.waitForElementAndSendKeys(searchInputInProcessId, searchedString);
-        MainPageObject.waitForElementPresent(searchResultId);
-        MainPageObject.waitForElementAndClick(articleInSearch,
-                "Could not find searched article: " + articleInSearch.toString(), 10);
-        WebElement element;
-        try {
-            element = driver.findElement(articleTitle);
-            assertTrue("Title of article not found", element.isDisplayed());
-        } catch (NoSuchElementException e) {
-            fail("Title of article was not found");
-        }
+        SearchPageObject SearchPageObject = new SearchPageObject(driver);
+        SearchPageObject.initSearchInput();
+        SearchPageObject.typeSearchLine(searchedString);
+        SearchPageObject.waitForAnySearchResult();
+        SearchPageObject.clickByArticleWithSubstring(articleInSearch);
+
+        ArticlePageObject ArticlePageObject = new ArticlePageObject(driver);
+        assertEquals("", articleInSearch, ArticlePageObject.getArticleTitle());
     }
 }

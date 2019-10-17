@@ -14,7 +14,8 @@ public class ArticlePageObject extends MainPageObject {
             CREATE_NEW_FOLDER_BUTTON = "org.wikipedia:id/create_button",
             MY_LIST_NAME_INPUT = "org.wikipedia:id/text_input",
             MY_LIST_OK_BUTTON = "//*[@text='OK']",
-            CLOSE_ARTICLE_BUTTON = "//android.widget.ImageButton[@content-desc='Navigate up']";
+            CLOSE_ARTICLE_BUTTON = "//android.widget.ImageButton[@content-desc='Navigate up']",
+            EXISTING_LIST = "//*[@text='{LIST_TITLE}']";
 
     public ArticlePageObject(AppiumDriver driver) {
         super(driver);
@@ -40,15 +41,18 @@ public class ArticlePageObject extends MainPageObject {
         if (this.checkElementVisibility(By.id(ADD_TO_MY_LIST_OVERLAY))) {
             this.waitForElementAndClick(By.id(ADD_TO_MY_LIST_OVERLAY), "Could not find GOT IT button.", 5);
         } else {
-            this.waitForElementAndClick(By.id(CREATE_NEW_FOLDER_BUTTON), "Could not find Create new list button.", 5);
+            String existedList = EXISTING_LIST.replace("{LIST_TITLE}", nameOfFolder);
+            if (this.checkElementVisibility(By.xpath(existedList)))
+                this.waitForElementAndClick(By.id(existedList), "Could not click existed list", 5);
+            else
+                this.waitForElementAndClick(By.id(CREATE_NEW_FOLDER_BUTTON), "Could not find Create new list button.", 5);
         }
         this.waitForElementAndClear(By.id(MY_LIST_NAME_INPUT), "Could not find input field of new title", 5);
         this.waitForElementAndSendKeys(By.id(MY_LIST_NAME_INPUT), nameOfFolder, "Cannotput text to articles folder input", 5);
         this.waitForElementAndClick(By.id(MY_LIST_OK_BUTTON), "Cannot press OK button", 5);
     }
 
-    public void closeArticle()
-    {
+    public void closeArticle() {
         this.waitForElementAndClick(By.xpath(CLOSE_ARTICLE_BUTTON), "Cannot close article by X link", 10);
     }
 }
