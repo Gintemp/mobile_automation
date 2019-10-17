@@ -165,6 +165,11 @@ public class MainPageObject {
     public void assertElementNotPresent(By by, String errorMessage)
     {
         int amountOfSearch = getAmountOfElements(by);
+        if(amountOfSearch > 0)
+        {
+            String defaultMessage = "An element " + by.toString() + " suposed to br not present";
+            throw new AssertionError(defaultMessage + " " + errorMessage);
+        }
         Assert.assertEquals(errorMessage, amountOfSearch, 0);
     }
 }
