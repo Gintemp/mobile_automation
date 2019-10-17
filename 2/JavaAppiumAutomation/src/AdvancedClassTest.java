@@ -74,7 +74,7 @@ public class AdvancedClassTest extends BaseTestClass {
     }
 
     @Test
-    public void assertElementPresent()
+    public void checkIfArticleHasTitle()
     {
         String searchedString = "Skyrim";
         By articleInSearch = By.xpath("//*[@resource-id='org.wikipedia:id/page_list_item_container']//*[@text='The Elder Scrolls V: Skyrim']");
