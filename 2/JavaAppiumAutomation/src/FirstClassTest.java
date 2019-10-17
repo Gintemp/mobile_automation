@@ -22,7 +22,7 @@ public class FirstClassTest extends CoreTestCase {
 
         SearchPageObject SearchPageObject = new SearchPageObject(driver);
         SearchPageObject.initSearchInput();
-        Assert.assertEquals(
+        assertEquals(
                 "Expected default text in search field is not equal " + searchedString,
                 searchedString,
                 SearchPageObject.getSearchInputText());
@@ -41,15 +41,13 @@ public class FirstClassTest extends CoreTestCase {
         MainPageObject.waitForElementPresent(By.id(searchResultId));
 
         List<WebElement> articlesList = driver.findElements(By.id(searchResultId));
-        Assert.assertNotEquals(
-                "Amount of articles equal 0. Searched string: " + searchedString, articlesList.size(), 0);
+        assertNotSame("Amount of articles equal 0. Searched string: " + searchedString, articlesList.size(), 0);
 
         MainPageObject.waitForElementAndClick(By.id(cancelSearchId));
         MainPageObject.waitForElementNotPresent(By.id(searchResultId));
 
         List<WebElement> emptyArticlesList = driver.findElements(By.id(searchResultId));
-        Assert.assertEquals(
-                "Amount of articles not equal 0.", emptyArticlesList.size(), 0);
+        assertEquals("Amount of articles not equal 0.", emptyArticlesList.size(), 0);
     }
 
     @Test
@@ -65,8 +63,7 @@ public class FirstClassTest extends CoreTestCase {
         MainPageObject.waitForElementPresent(By.id(searchResultId));
 
         List<WebElement> articlesList = driver.findElements(By.id(searchResultId));
-        Assert.assertNotEquals(
-                "Amount of articles equal 0. Searched string: " + searchedString, articlesList.size(), 0);
+        assertNotSame("Amount of articles equal 0. Searched string: " + searchedString, articlesList.size(), 0);
 
         boolean isAsserted = false;
         StringBuilder errorString = new StringBuilder();
@@ -83,6 +80,6 @@ public class FirstClassTest extends CoreTestCase {
             }
         }
 
-        Assert.assertFalse(errorString.toString(), isAsserted);
+        assertFalse(errorString.toString(), isAsserted);
     }
 }

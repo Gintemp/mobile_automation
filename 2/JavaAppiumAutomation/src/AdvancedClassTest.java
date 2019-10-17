@@ -1,6 +1,5 @@
 import lib.CoreTestCase;
 import lib.ui.MainPageObject;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.By;
@@ -12,16 +11,10 @@ import java.util.List;
 
 public class AdvancedClassTest extends CoreTestCase {
     private lib.ui.MainPageObject MainPageObject;
-    protected void setUp() throws Exception
-    {
+
+    protected void setUp() throws Exception {
         super.setUp();
         MainPageObject = new MainPageObject(driver);
-    }
-
-    @Before
-    public void preparations()
-    {
-        driver.rotate(ScreenOrientation.PORTRAIT);
     }
 
     @Test
@@ -51,7 +44,7 @@ public class AdvancedClassTest extends CoreTestCase {
         MainPageObject.waitForElementPresent(searchResultId);
 
         List<WebElement> articlesList = driver.findElements(searchResultId);
-        Assert.assertNotEquals("Amount of articles equal 0. Searched string: " + searchedString,
+        assertNotSame("Amount of articles equal 0. Searched string: " + searchedString,
                 articlesList.size(), 0);
         MainPageObject.waitForElementAndClick(firstArticle, "Could not find first article", 10);
         MainPageObject.waitForElementPresent(articleTitle);
@@ -87,12 +80,11 @@ public class AdvancedClassTest extends CoreTestCase {
         MainPageObject.waitForElementAndClick(secondArticle);
         String attrValue = MainPageObject.waitForElementAndGetAttribute(articleTitle, "text",
                 "Could not find article by xpath " + articleTitle.toString(), 5);
-        Assert.assertEquals("Expected title string is not equal to real", secondArticleTitle, attrValue);
+        assertEquals("Expected title string is not equal to real", secondArticleTitle, attrValue);
     }
 
     @Test
-    public void testAssertElementPresent()
-    {
+    public void testAssertElementPresent() {
         String searchedString = "Skyrim";
         By articleInSearch = By.xpath("//*[@resource-id='org.wikipedia:id/page_list_item_container']//*[@text='The Elder Scrolls V: Skyrim']");
         By articleTitle = By.xpath("//*[@resource-id='org.wikipedia:id/view_page_title_text']");
@@ -104,14 +96,13 @@ public class AdvancedClassTest extends CoreTestCase {
         MainPageObject.waitForElementAndSendKeys(searchInputInProcessId, searchedString);
         MainPageObject.waitForElementPresent(searchResultId);
         MainPageObject.waitForElementAndClick(articleInSearch,
-                "Could not find searched article: " +articleInSearch.toString() , 10);
+                "Could not find searched article: " + articleInSearch.toString(), 10);
         WebElement element;
         try {
             element = driver.findElement(articleTitle);
-            Assert.assertTrue("Title of article not found", element.isDisplayed());
-        }catch (NoSuchElementException e)
-        {
-            Assert.fail("Title of article was not found");
+            assertTrue("Title of article not found", element.isDisplayed());
+        } catch (NoSuchElementException e) {
+            fail("Title of article was not found");
         }
     }
 }
