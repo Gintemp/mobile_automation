@@ -13,6 +13,8 @@ public class SearchPageObject extends MainPageObject {
             SEARCH_INPUT = "org.wikipedia:id/search_src_text",
             SEARCH_RESULT = "org.wikipedia:id/page_list_item_container",
             SEARCH_RESULT_BY_SUBSTRING_TPL = "//*[@resource-id='org.wikipedia:id/page_list_item_container']//*[@text='{SUBSTRING}']",
+            SEARCH_RESULT_BY_SUBSTRING_ARTICLE_AND_DESCRIPTION_TPL =
+                    "//*[@resource-id='org.wikipedia:id/page_list_item_container']//*[@text='{ARTICLE}']/../*[@text='{DESCRIPTION}']",
             SEARCH_CANCEL_BUTTON = "org.wikipedia:id/search_close_btn",
             SEARCH_RESULT_ELEMENT = "//*[@resource-id='org.wikipedia:id/search_results_list']/*[@resource-id='org.wikipedia:id/page_list_item_container']",
             SEARCH_EMPTY_RESULT_ELEMENT = "//*[@text='No results found']",
@@ -25,6 +27,12 @@ public class SearchPageObject extends MainPageObject {
     /* TEMPLATE METHODS */
     private static String getResultSearchElement(String subString) {
         return SEARCH_RESULT_BY_SUBSTRING_TPL.replace("{SUBSTRING}", subString);
+    }
+
+    private static String getResultSearchElement(String article, String desc) {
+        return SEARCH_RESULT_BY_SUBSTRING_ARTICLE_AND_DESCRIPTION_TPL
+                .replace("{ARTICLE}", article)
+                .replace("{DESCRIPTION}", desc);
     }
     /* TEMPLATES METHODS END */
 
@@ -50,6 +58,21 @@ public class SearchPageObject extends MainPageObject {
         String searchResultXpath = getResultSearchElement(subString);
         this.waitForElementAndClick(By.xpath(searchResultXpath),
                 "Cannot find and click search result with substring " + subString, 10);
+    }
+
+    public void clickByArticleWithDescriptionBySubstring(String article, String desc) {
+        String searchResultXpath = getResultSearchElement(article, desc);
+        this.waitForElementAndClick(By.xpath(searchResultXpath),
+                "Cannot find and click search result with article " + article +
+                        " and description " + desc, 10);
+    }
+
+    public void waitForElementByTitleAndDescription(String title, String description)
+    {
+        String elementXpath = getResultSearchElement(title, description);
+        waitForElementPresent(By.xpath(elementXpath),
+                "Cannot find element with article " + title +
+                        " and description " + description, 10);
     }
 
     public void waitForCancelButtonToAppear() {

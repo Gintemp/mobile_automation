@@ -47,4 +47,23 @@ public class SearchTests extends CoreTestCase {
         }
         assertFalse(errorString.toString(), isAsserted);
     }
+
+    @Test
+    public void testSearchByArticleAndDescriptionInResult() {
+        String searchText = "Java";
+        String firstArticle = "Java";
+        String firstDescription = "Island of Indonesia";
+        String secondArticle = "Java (programming language)";
+        String secondDescription = "Object-oriented programming language";
+        String thirdArticle = "JavaScript";
+        String thirdDescription = "Programming language";
+
+        SearchPageObject SearchPageObject = new SearchPageObject(driver);
+        SearchPageObject.initSearchInput();
+        SearchPageObject.typeSearchLine(searchText);
+        SearchPageObject.waitForAnySearchResult();
+        SearchPageObject.waitForElementByTitleAndDescription(firstArticle, firstDescription);
+        SearchPageObject.waitForElementByTitleAndDescription(secondArticle, secondDescription);
+        SearchPageObject.waitForElementByTitleAndDescription(thirdArticle, thirdDescription);
+    }
 }
