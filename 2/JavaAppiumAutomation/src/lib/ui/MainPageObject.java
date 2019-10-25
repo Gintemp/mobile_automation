@@ -83,9 +83,14 @@ public class MainPageObject {
     }
 
     public boolean checkElementVisibility(By by) {
-        WebDriverWait driverWait = new WebDriverWait(driver, 10);
-        return driver.findElement(by).isDisplayed();
-
+        try {
+            driver.findElement(by);
+            return true;
+        }catch (Exception e)
+        {
+            System.out.println(by.toString() + " not found.\n");
+            return false;
+        }
     }
 
 

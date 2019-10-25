@@ -39,21 +39,30 @@ public class ArticlePageObject extends MainPageObject {
         this.waitForElementAndClick(By.xpath(OPTIONS_ADD_TO_MY_LIST_BUTTON), "Could not find Add to list option", 10);
 
         if (this.checkElementVisibility(By.id(ADD_TO_MY_LIST_OVERLAY))) {
-            this.waitForElementAndClick(By.id(ADD_TO_MY_LIST_OVERLAY), "Could not find GOT IT button.", 5);
+            this.waitForElementAndClick(By.id(ADD_TO_MY_LIST_OVERLAY), "Could not find GOT IT button.", 15);
+            this.waitForElementAndClear(By.id(MY_LIST_NAME_INPUT), "Could not find input field of new title", 15);
+            this.waitForElementAndSendKeys(By.id(MY_LIST_NAME_INPUT), nameOfFolder, "Cannot put text to articles folder input", 15);
+            this.waitForElementAndClick(By.xpath(MY_LIST_OK_BUTTON), "Cannot press OK button", 15);
         } else {
             String existedList = EXISTING_LIST.replace("{LIST_TITLE}", nameOfFolder);
-            if (this.checkElementVisibility(By.xpath(existedList)))
-                this.waitForElementAndClick(By.id(existedList), "Could not click existed list", 5);
-            else
-                this.waitForElementAndClick(By.id(CREATE_NEW_FOLDER_BUTTON), "Could not find Create new list button.", 5);
+            if (this.checkElementVisibility(By.xpath(existedList))) {
+                this.waitForElementAndClick(By.xpath(existedList), "Could not click existed list", 15);
+            } else {
+                this.waitForElementAndClick(By.id(CREATE_NEW_FOLDER_BUTTON), "Could not find Create new list button.", 15);
+                this.waitForElementAndClear(By.id(MY_LIST_NAME_INPUT), "Could not find input field of new title", 15);
+                this.waitForElementAndSendKeys(By.id(MY_LIST_NAME_INPUT), nameOfFolder, "Cannot put text to articles folder input", 15);
+                this.waitForElementAndClick(By.xpath(MY_LIST_OK_BUTTON), "Cannot press OK button", 15);
+            }
         }
-        this.waitForElementAndClear(By.id(MY_LIST_NAME_INPUT), "Could not find input field of new title", 5);
-        this.waitForElementAndSendKeys(By.id(MY_LIST_NAME_INPUT), nameOfFolder, "Cannotput text to articles folder input", 5);
-        this.waitForElementAndClick(By.id(MY_LIST_OK_BUTTON), "Cannot press OK button", 5);
     }
 
     public void closeArticle() {
         this.waitForElementAndClick(By.xpath(CLOSE_ARTICLE_BUTTON), "Cannot close article by X link", 10);
+    }
+
+    public void tapArticle()
+    {
+        driver.tap(1, this.waitForTitleElement(), 1);
     }
 
     public void assertTitlePresent() {

@@ -4,11 +4,8 @@ import lib.ui.MyListsPageObject;
 import lib.ui.NavigationUI;
 import lib.ui.SearchPageObject;
 import org.junit.Test;
-import org.openqa.selenium.By;
-import org.openqa.selenium.NoSuchElementException;
-import org.openqa.selenium.WebElement;
 
-public class AdvancedClassTest extends CoreTestCase {
+public class ArticleTests extends CoreTestCase {
 
     @Test
     public void testSaveAndDeleteArticle() {
@@ -32,7 +29,7 @@ public class AdvancedClassTest extends CoreTestCase {
         SearchPageObject.initSearchInput();
         SearchPageObject.typeSearchLine(searchedString);
         SearchPageObject.waitForAnySearchResult();
-        SearchPageObject.clickByArticleWithSubstring("The Elder Scrolls V: Skyrim – Dawnguard");
+        SearchPageObject.clickByArticleWithSubstring(secondArticleTitle);
         ArticlePageObject.waitForTitleElement();
         ArticlePageObject.addArticleToMyList(listTitle);
         ArticlePageObject.closeArticle();
