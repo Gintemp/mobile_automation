@@ -1,3 +1,5 @@
+package tests;
+
 import lib.CoreTestCase;
 import lib.ui.ArticlePageObject;
 import lib.ui.MyListsPageObject;
