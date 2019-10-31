@@ -5,6 +5,8 @@ import lib.ui.ArticlePageObject;
 import lib.ui.MyListsPageObject;
 import lib.ui.NavigationUI;
 import lib.ui.SearchPageObject;
+import lib.ui.factories.ArticlePageObjectFactory;
+import lib.ui.factories.SearchPageObjectFactory;
 import org.junit.Test;
 
 public class ArticleTests extends CoreTestCase {
@@ -17,8 +19,8 @@ public class ArticleTests extends CoreTestCase {
         String secondArticleTitle = "The Elder Scrolls V: Skyrim – Dawnguard";
 
         //first article
-        SearchPageObject SearchPageObject = new SearchPageObject(driver);
-        ArticlePageObject ArticlePageObject = new ArticlePageObject(driver);
+        SearchPageObject SearchPageObject = SearchPageObjectFactory.get(driver);
+        ArticlePageObject ArticlePageObject = ArticlePageObjectFactory.get(driver);
         SearchPageObject.initSearchInput();
         SearchPageObject.typeSearchLine(searchedString);
         SearchPageObject.waitForAnySearchResult();
@@ -52,13 +54,13 @@ public class ArticleTests extends CoreTestCase {
         String searchedString = "Skyrim";
         String articleInSearch = "The Elder Scrolls V: Skyrim";
 
-        SearchPageObject SearchPageObject = new SearchPageObject(driver);
+        SearchPageObject SearchPageObject = SearchPageObjectFactory.get(driver);
         SearchPageObject.initSearchInput();
         SearchPageObject.typeSearchLine(searchedString);
         SearchPageObject.waitForAnySearchResult();
         SearchPageObject.clickByArticleWithSubstring(articleInSearch);
 
-        ArticlePageObject ArticlePageObject = new ArticlePageObject(driver);
+        ArticlePageObject ArticlePageObject = ArticlePageObjectFactory.get(driver);;
         ArticlePageObject.assertTitlePresent();
     }
 }
