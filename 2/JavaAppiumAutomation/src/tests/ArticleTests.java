@@ -1,11 +1,14 @@
 package tests;
 
 import lib.CoreTestCase;
+import lib.Platform;
 import lib.ui.ArticlePageObject;
 import lib.ui.MyListsPageObject;
 import lib.ui.NavigationUI;
 import lib.ui.SearchPageObject;
 import lib.ui.factories.ArticlePageObjectFactory;
+import lib.ui.factories.MyListsPageObjectFactory;
+import lib.ui.factories.NavigationUIFactory;
 import lib.ui.factories.SearchPageObjectFactory;
 import org.junit.Test;
 
@@ -26,7 +29,10 @@ public class ArticleTests extends CoreTestCase {
         SearchPageObject.waitForAnySearchResult();
         SearchPageObject.clickByArticleWithSubstring(firstArticleTitle);
         ArticlePageObject.waitForTitleElement();
-        ArticlePageObject.addArticleToMyList(listTitle);
+        if (Platform.getInstance().isAndroid())
+            ArticlePageObject.addArticleToMyList(listTitle);
+        else
+            ArticlePageObject.addArticlesToMySaved();
         ArticlePageObject.closeArticle();
 
         //second article
@@ -35,14 +41,18 @@ public class ArticleTests extends CoreTestCase {
         SearchPageObject.waitForAnySearchResult();
         SearchPageObject.clickByArticleWithSubstring(secondArticleTitle);
         ArticlePageObject.waitForTitleElement();
-        ArticlePageObject.addArticleToMyList(listTitle);
+        if (Platform.getInstance().isAndroid())
+            ArticlePageObject.addArticleToMyList(listTitle);
+        else
+            ArticlePageObject.addArticlesToMySaved();
         ArticlePageObject.closeArticle();
 
         //open My Lists
-        NavigationUI NavigationUI = new NavigationUI(driver);
+        NavigationUI NavigationUI = NavigationUIFactory.get(driver);
         NavigationUI.clickMyLists();
-        MyListsPageObject MyListsPageObject = new MyListsPageObject(driver);
-        MyListsPageObject.openFolderByName(listTitle);
+        MyListsPageObject MyListsPageObject = MyListsPageObjectFactory.get(driver);
+        if (Platform.getInstance().isAndroid())
+            MyListsPageObject.openFolderByName(listTitle);
         MyListsPageObject.swipeByArticleToDelete(firstArticleTitle);
         MyListsPageObject.waitForArticleToDisappear(firstArticleTitle);
         MyListsPageObject.openArticle(secondArticleTitle);
@@ -60,7 +70,7 @@ public class ArticleTests extends CoreTestCase {
         SearchPageObject.waitForAnySearchResult();
         SearchPageObject.clickByArticleWithSubstring(articleInSearch);
 
-        ArticlePageObject ArticlePageObject = ArticlePageObjectFactory.get(driver);;
+        ArticlePageObject ArticlePageObject = ArticlePageObjectFactory.get(driver);
         ArticlePageObject.assertTitlePresent();
     }
 }

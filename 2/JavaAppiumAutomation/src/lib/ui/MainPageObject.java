@@ -2,6 +2,7 @@ package lib.ui;
 
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.TouchAction;
+import lib.Platform;
 import org.junit.Assert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
@@ -118,13 +119,10 @@ public class MainPageObject {
         }
     }
 
-    public void swipeUpTillElementAppear(String locator, String errorMessage, int maxSwipes)
-    {
+    public void swipeUpTillElementAppear(String locator, String errorMessage, int maxSwipes) {
         int alreadySwiped = 0;
-        while(!this.isElementLocatedOnTheScreen(locator))
-        {
-            if(alreadySwiped > maxSwipes)
-            {
+        while (!this.isElementLocatedOnTheScreen(locator)) {
+            if (alreadySwiped > maxSwipes) {
                 Assert.assertTrue(errorMessage, this.isElementLocatedOnTheScreen(locator));
             }
 
@@ -133,8 +131,7 @@ public class MainPageObject {
         }
     }
 
-    public boolean isElementLocatedOnTheScreen(String locator)
-    {
+    public boolean isElementLocatedOnTheScreen(String locator) {
         int elementLocationByY = this.waitForElementPresent(locator, "Cannot find element by locator", 5)
                 .getLocation().getY();
         int screenSizeByY = driver.manage().window().getSize().getHeight();
@@ -169,12 +166,34 @@ public class MainPageObject {
         int middleY = (upperY + lowerY) / 2;
 
         TouchAction action = new TouchAction(driver);
-        action
-                .press(rightX, middleY)
-                .waitAction(400)
-                .moveTo(leftX, middleY)
-                .release()
-                .perform();
+        action.press(rightX, middleY);
+        action.waitAction(400);
+        if (Platform.getInstance().isAndroid())
+            action.moveTo(leftX, middleY);
+        else
+        {
+            int offsetX = (-1 * element.getSize().getWidth());
+            action.moveTo(offsetX,0);
+        }
+        action.release();
+
+        action.perform();
+    }
+
+    public void clickElementToTheRightUpperCorner(String locator, String errorMessage)
+    {
+        WebElement element = this.waitForElementPresent(locator + "/..", errorMessage);
+        int rightX = element.getLocation().getX();
+        int upperY = element.getLocation().getY();
+        int lowerY = upperY + element.getSize().getHeight();
+        int middleY = (upperY + lowerY) / 2;
+        int width = element.getSize().getWidth();
+
+        int pointToClickX = (rightX + width) - 3;
+        int pointToClickY = middleY;
+
+        TouchAction action = new TouchAction(driver);
+        action.tap(pointToClickX, pointToClickY).perform();
     }
 
     public String waitForElementAndGetAttribute(String locator, String attribute, String errorMessage, long timeout) {
