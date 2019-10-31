@@ -28,23 +28,31 @@ public class ArticleTests extends CoreTestCase {
         SearchPageObject.typeSearchLine(searchedString);
         SearchPageObject.waitForAnySearchResult();
         SearchPageObject.clickByArticleWithSubstring(firstArticleTitle);
-        ArticlePageObject.waitForTitleElement();
-        if (Platform.getInstance().isAndroid())
+        if (Platform.getInstance().isAndroid()) {
+            ArticlePageObject.waitForTitleElement();
             ArticlePageObject.addArticleToMyList(listTitle);
-        else
+        }
+        else {
+            ArticlePageObject.waitForTitleElementOnIOS(firstArticleTitle);
             ArticlePageObject.addArticlesToMySaved();
+        }
+        ArticlePageObject.closeArticle();
         ArticlePageObject.closeArticle();
 
         //second article
         SearchPageObject.initSearchInput();
-        SearchPageObject.typeSearchLine(searchedString);
+        if(Platform.getInstance().isAndroid())
+            SearchPageObject.typeSearchLine(searchedString);
         SearchPageObject.waitForAnySearchResult();
         SearchPageObject.clickByArticleWithSubstring(secondArticleTitle);
-        ArticlePageObject.waitForTitleElement();
-        if (Platform.getInstance().isAndroid())
+        if (Platform.getInstance().isAndroid()) {
+            ArticlePageObject.waitForTitleElement();
             ArticlePageObject.addArticleToMyList(listTitle);
-        else
+        }
+        else {
+            ArticlePageObject.waitForTitleElementOnIOS(secondArticleTitle);
             ArticlePageObject.addArticlesToMySaved();
+        }
         ArticlePageObject.closeArticle();
 
         //open My Lists
@@ -53,10 +61,22 @@ public class ArticleTests extends CoreTestCase {
         MyListsPageObject MyListsPageObject = MyListsPageObjectFactory.get(driver);
         if (Platform.getInstance().isAndroid())
             MyListsPageObject.openFolderByName(listTitle);
-        MyListsPageObject.swipeByArticleToDelete(firstArticleTitle);
-        MyListsPageObject.waitForArticleToDisappear(firstArticleTitle);
-        MyListsPageObject.openArticle(secondArticleTitle);
-        assertEquals("Expected title string is not equal to real", secondArticleTitle, ArticlePageObject.getArticleTitle());
+        MyListsPageObject.swipeByArticleToDelete(secondArticleTitle);
+        MyListsPageObject.waitForArticleToDisappear(secondArticleTitle);
+
+        //альтернативная проверка
+        if(Platform.getInstance().isIOS()) {
+            MyListsPageObject.typeMyListsSearchLine(firstArticleTitle);
+            MyListsPageObject.waitForAnySearchResultInMyLists();
+        }
+
+        MyListsPageObject.openArticle(firstArticleTitle);
+        String currentTitle;
+        if (Platform.getInstance().isAndroid())
+            currentTitle = ArticlePageObject.getArticleTitle();
+        else
+            currentTitle = ArticlePageObject.getArticleTitleOnIOS(firstArticleTitle);
+        assertEquals("Expected title string is not equal to real", firstArticleTitle, currentTitle);
     }
 
     @Test

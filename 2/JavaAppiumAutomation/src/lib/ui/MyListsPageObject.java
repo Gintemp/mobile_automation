@@ -6,7 +6,9 @@ import lib.Platform;
 abstract public class MyListsPageObject extends MainPageObject {
     protected static String
             FOLDER_BY_NAME_TPL,
-            ARTICLE_BY_TITLE_TPL;
+            ARTICLE_BY_TITLE_TPL,
+            SEARCH_IN_ARTICLES,
+            RESULT_IN_SEARCH;
 
     private static String getFolderXpathByName(String nameOfFolder) {
         return FOLDER_BY_NAME_TPL.replace("{FOLDER_NAME}", nameOfFolder);
@@ -54,5 +56,14 @@ abstract public class MyListsPageObject extends MainPageObject {
                 getSavedArticleXpathByTitle(articleTitle),
                 "Cannot open article " + articleTitle + " in list",
                 15);
+    }
+
+    public void typeMyListsSearchLine(String searchMask)
+    {
+        this.waitForElementAndSendKeys(SEARCH_IN_ARTICLES, searchMask, "Cannot send keys to search input in my lists", 10);
+    }
+
+    public void waitForAnySearchResultInMyLists() {
+        this.waitForElementPresent(RESULT_IN_SEARCH, "Cannot find search result");
     }
 }

@@ -25,6 +25,15 @@ abstract public class ArticlePageObject extends MainPageObject {
         return this.waitForElementPresent(TITLE, "Cannot find title article on page!", 15);
     }
 
+    public WebElement waitForTitleElementOnIOS(String articleTitle) {
+        return this.waitForElementPresent(TITLE.replace("{TITLE}", articleTitle), "Cannot find title article on page!", 15);
+    }
+
+    public String getArticleTitleOnIOS(String articleTitle) {
+        WebElement titleElement = waitForTitleElementOnIOS(articleTitle);
+        return titleElement.getAttribute("name");
+    }
+
     public String getArticleTitle() {
         WebElement titleElement = waitForTitleElement();
         if (Platform.getInstance().isAndroid())
@@ -68,7 +77,7 @@ abstract public class ArticlePageObject extends MainPageObject {
     }
 
     public void closeArticle() {
-        this.waitForElementAndClick(CLOSE_ARTICLE_BUTTON, "Cannot close article by X link", 10);
+        this.waitForElementAndClick(CLOSE_ARTICLE_BUTTON, "Cannot close article by X link", 5);
     }
 
     public void tapArticle() {
