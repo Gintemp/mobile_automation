@@ -1,10 +1,15 @@
 package tests;
 
 import lib.CoreTestCase;
+import lib.Platform;
 import lib.ui.ArticlePageObject;
 import lib.ui.MyListsPageObject;
 import lib.ui.NavigationUI;
 import lib.ui.SearchPageObject;
+import lib.ui.factories.ArticlePageObjectFactory;
+import lib.ui.factories.MyListsPageObjectFactory;
+import lib.ui.factories.NavigationUIFactory;
+import lib.ui.factories.SearchPageObjectFactory;
 import org.junit.Test;
 
 public class ArticleTests extends CoreTestCase {
@@ -17,34 +22,62 @@ public class ArticleTests extends CoreTestCase {
         String secondArticleTitle = "The Elder Scrolls V: Skyrim – Dawnguard";
 
         //first article
-        SearchPageObject SearchPageObject = new SearchPageObject(driver);
-        ArticlePageObject ArticlePageObject = new ArticlePageObject(driver);
+        SearchPageObject SearchPageObject = SearchPageObjectFactory.get(driver);
+        ArticlePageObject ArticlePageObject = ArticlePageObjectFactory.get(driver);
         SearchPageObject.initSearchInput();
         SearchPageObject.typeSearchLine(searchedString);
         SearchPageObject.waitForAnySearchResult();
         SearchPageObject.clickByArticleWithSubstring(firstArticleTitle);
-        ArticlePageObject.waitForTitleElement();
-        ArticlePageObject.addArticleToMyList(listTitle);
+        if (Platform.getInstance().isAndroid()) {
+            ArticlePageObject.waitForTitleElement();
+            ArticlePageObject.addArticleToMyList(listTitle);
+        }
+        else {
+            ArticlePageObject.waitForTitleElementOnIOS(firstArticleTitle);
+            ArticlePageObject.addArticlesToMySaved();
+        }
+        if(Platform.getInstance().isIOS())
+            ArticlePageObject.closeArticle();
         ArticlePageObject.closeArticle();
 
         //second article
         SearchPageObject.initSearchInput();
-        SearchPageObject.typeSearchLine(searchedString);
+        if(Platform.getInstance().isAndroid())
+            SearchPageObject.typeSearchLine(searchedString);
         SearchPageObject.waitForAnySearchResult();
         SearchPageObject.clickByArticleWithSubstring(secondArticleTitle);
-        ArticlePageObject.waitForTitleElement();
-        ArticlePageObject.addArticleToMyList(listTitle);
+        if (Platform.getInstance().isAndroid()) {
+            ArticlePageObject.waitForTitleElement();
+            ArticlePageObject.addArticleToMyList(listTitle);
+        }
+        else {
+            ArticlePageObject.waitForTitleElementOnIOS(secondArticleTitle);
+            ArticlePageObject.addArticlesToMySaved();
+        }
         ArticlePageObject.closeArticle();
 
         //open My Lists
-        NavigationUI NavigationUI = new NavigationUI(driver);
+        NavigationUI NavigationUI = NavigationUIFactory.get(driver);
         NavigationUI.clickMyLists();
-        MyListsPageObject MyListsPageObject = new MyListsPageObject(driver);
-        MyListsPageObject.openFolderByName(listTitle);
-        MyListsPageObject.swipeByArticleToDelete(firstArticleTitle);
-        MyListsPageObject.waitForArticleToDisappear(firstArticleTitle);
-        MyListsPageObject.openArticle(secondArticleTitle);
-        assertEquals("Expected title string is not equal to real", secondArticleTitle, ArticlePageObject.getArticleTitle());
+        MyListsPageObject MyListsPageObject = MyListsPageObjectFactory.get(driver);
+        if (Platform.getInstance().isAndroid())
+            MyListsPageObject.openFolderByName(listTitle);
+        MyListsPageObject.swipeByArticleToDelete(secondArticleTitle);
+        MyListsPageObject.waitForArticleToDisappear(secondArticleTitle);
+
+        //альтернативная проверка
+        if(Platform.getInstance().isIOS()) {
+            MyListsPageObject.typeMyListsSearchLine(firstArticleTitle);
+            MyListsPageObject.waitForAnySearchResultInMyLists();
+        }
+
+        MyListsPageObject.openArticle(firstArticleTitle);
+        String currentTitle;
+        if (Platform.getInstance().isAndroid())
+            currentTitle = ArticlePageObject.getArticleTitle();
+        else
+            currentTitle = ArticlePageObject.getArticleTitleOnIOS(firstArticleTitle);
+        assertEquals("Expected title string is not equal to real", firstArticleTitle, currentTitle);
     }
 
     @Test
@@ -52,13 +85,13 @@ public class ArticleTests extends CoreTestCase {
         String searchedString = "Skyrim";
         String articleInSearch = "The Elder Scrolls V: Skyrim";
 
-        SearchPageObject SearchPageObject = new SearchPageObject(driver);
+        SearchPageObject SearchPageObject = SearchPageObjectFactory.get(driver);
         SearchPageObject.initSearchInput();
         SearchPageObject.typeSearchLine(searchedString);
         SearchPageObject.waitForAnySearchResult();
         SearchPageObject.clickByArticleWithSubstring(articleInSearch);
 
-        ArticlePageObject ArticlePageObject = new ArticlePageObject(driver);
+        ArticlePageObject ArticlePageObject = ArticlePageObjectFactory.get(driver);
         ArticlePageObject.assertTitlePresent();
     }
 }

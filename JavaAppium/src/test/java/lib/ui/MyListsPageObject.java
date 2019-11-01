@@ -1,12 +1,14 @@
 package lib.ui;
 
 import io.appium.java_client.AppiumDriver;
-import org.openqa.selenium.By;
+import lib.Platform;
 
-public class MyListsPageObject extends MainPageObject {
-    public static final String
-            FOLDER_BY_NAME_TPL = "//*[@text='{FOLDER_NAME}']",
-            ARTICLE_BY_TITLE_TPL = "//*[@text='{TITLE}']";
+abstract public class MyListsPageObject extends MainPageObject {
+    protected static String
+            FOLDER_BY_NAME_TPL,
+            ARTICLE_BY_TITLE_TPL,
+            SEARCH_IN_ARTICLES,
+            RESULT_IN_SEARCH;
 
     private static String getFolderXpathByName(String nameOfFolder) {
         return FOLDER_BY_NAME_TPL.replace("{FOLDER_NAME}", nameOfFolder);
@@ -22,36 +24,46 @@ public class MyListsPageObject extends MainPageObject {
 
     public void openFolderByName(String nameOfFolder) {
         this.waitForElementAndClick(
-                By.xpath(getFolderXpathByName(nameOfFolder)),
+                getFolderXpathByName(nameOfFolder),
                 "Cannot find folder by name " + nameOfFolder,
                 5
         );
     }
 
-    public void swipeByArticleToDelete(String articleTitle)
-    {
+    public void swipeByArticleToDelete(String articleTitle) {
         this.waitForArticleToAppear(articleTitle);
+        String articleXpath = getSavedArticleXpathByTitle(articleTitle);
         this.swipeElementToLeft(
-                By.xpath(getSavedArticleXpathByTitle(articleTitle)),
+                articleXpath,
                 "Cannot delete article " + articleTitle);
+        if(Platform.getInstance().isIOS())
+        {
+            this.clickElementToTheRightUpperCorner(articleXpath, "Cannot find saved article.\n");
+        }
         this.waitForArticleToDisappear(articleTitle);
     }
 
-    public void waitForArticleToDisappear(String articleTitle)
-    {
-        this.waitForElementNotPresent(By.xpath(getSavedArticleXpathByTitle(articleTitle)), "Saved article still preset with title " + articleTitle, 15);
+    public void waitForArticleToDisappear(String articleTitle) {
+        this.waitForElementNotPresent(getSavedArticleXpathByTitle(articleTitle), "Saved article still preset with title " + articleTitle, 15);
     }
 
-    public void waitForArticleToAppear(String articleTitle)
-    {
-        this.waitForElementPresent(By.xpath(getSavedArticleXpathByTitle(articleTitle)), "Cannot find saved article by title " + articleTitle, 15);
+    public void waitForArticleToAppear(String articleTitle) {
+        this.waitForElementPresent(getSavedArticleXpathByTitle(articleTitle), "Cannot find saved article by title " + articleTitle, 15);
     }
 
-    public void openArticle(String articleTitle)
-    {
+    public void openArticle(String articleTitle) {
         this.waitForElementAndClick(
-                By.xpath(getSavedArticleXpathByTitle(articleTitle)),
+                getSavedArticleXpathByTitle(articleTitle),
                 "Cannot open article " + articleTitle + " in list",
                 15);
+    }
+
+    public void typeMyListsSearchLine(String searchMask)
+    {
+        this.waitForElementAndSendKeys(SEARCH_IN_ARTICLES, searchMask, "Cannot send keys to search input in my lists", 10);
+    }
+
+    public void waitForAnySearchResultInMyLists() {
+        this.waitForElementPresent(RESULT_IN_SEARCH, "Cannot find search result");
     }
 }

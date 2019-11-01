@@ -2,6 +2,7 @@ package tests;
 
 import lib.CoreTestCase;
 import lib.ui.SearchPageObject;
+import lib.ui.factories.SearchPageObjectFactory;
 import org.junit.Test;
 
 public class SearchTests extends CoreTestCase {
@@ -9,7 +10,7 @@ public class SearchTests extends CoreTestCase {
     @Test
     public void testFindSearchText() {
         String searchedString = "Search…";
-        SearchPageObject SearchPageObject = new SearchPageObject(driver);
+        SearchPageObject SearchPageObject = SearchPageObjectFactory.get(driver);
         SearchPageObject.initSearchInput();
         assertEquals(
                 "Expected default text in search field is not equal " + searchedString,
@@ -20,7 +21,7 @@ public class SearchTests extends CoreTestCase {
     @Test
     public void testSearchTextAndClearResult() {
         String searchedString = "Java";
-        SearchPageObject SearchPageObject = new SearchPageObject(driver);
+        SearchPageObject SearchPageObject = SearchPageObjectFactory.get(driver);
         SearchPageObject.initSearchInput();
         SearchPageObject.typeSearchLine(searchedString);
         SearchPageObject.waitForAnySearchResult();
@@ -31,7 +32,7 @@ public class SearchTests extends CoreTestCase {
     @Test
     public void testSearchTextInResult() {
         String searchedString = "Java";
-        SearchPageObject SearchPageObject = new SearchPageObject(driver);
+        SearchPageObject SearchPageObject = SearchPageObjectFactory.get(driver);
         SearchPageObject.initSearchInput();
         SearchPageObject.typeSearchLine(searchedString);
         SearchPageObject.waitForAnySearchResult();
@@ -60,7 +61,7 @@ public class SearchTests extends CoreTestCase {
         String thirdArticle = "JavaScript";
         String thirdDescription = "Programming language";
 
-        SearchPageObject SearchPageObject = new SearchPageObject(driver);
+        SearchPageObject SearchPageObject = SearchPageObjectFactory.get(driver);
         SearchPageObject.initSearchInput();
         SearchPageObject.typeSearchLine(searchText);
         SearchPageObject.waitForAnySearchResult();
