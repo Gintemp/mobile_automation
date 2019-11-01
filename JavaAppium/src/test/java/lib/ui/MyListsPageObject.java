@@ -1,14 +1,15 @@
 package lib.ui;
 
-import io.appium.java_client.AppiumDriver;
 import lib.Platform;
+import org.openqa.selenium.remote.RemoteWebDriver;
 
 abstract public class MyListsPageObject extends MainPageObject {
     protected static String
             FOLDER_BY_NAME_TPL,
             ARTICLE_BY_TITLE_TPL,
             SEARCH_IN_ARTICLES,
-            RESULT_IN_SEARCH;
+            RESULT_IN_SEARCH,
+            REMOVE_FROM_SAVED_BUTTON;
 
     private static String getFolderXpathByName(String nameOfFolder) {
         return FOLDER_BY_NAME_TPL.replace("{FOLDER_NAME}", nameOfFolder);
@@ -18,7 +19,11 @@ abstract public class MyListsPageObject extends MainPageObject {
         return ARTICLE_BY_TITLE_TPL.replace("{TITLE}", articleTitle);
     }
 
-    public MyListsPageObject(AppiumDriver driver) {
+    private static String getRemoveButtonByTitle(String articleTitle) {
+        return REMOVE_FROM_SAVED_BUTTON.replace("{TITLE}", articleTitle);
+    }
+
+    public MyListsPageObject(RemoteWebDriver driver) {
         super(driver);
     }
 
@@ -33,12 +38,22 @@ abstract public class MyListsPageObject extends MainPageObject {
     public void swipeByArticleToDelete(String articleTitle) {
         this.waitForArticleToAppear(articleTitle);
         String articleXpath = getSavedArticleXpathByTitle(articleTitle);
-        this.swipeElementToLeft(
-                articleXpath,
-                "Cannot delete article " + articleTitle);
-        if(Platform.getInstance().isIOS())
-        {
+
+        if (Platform.getInstance().isIOS() || Platform.getInstance().isAndroid()) {
+            this.swipeElementToLeft(
+                    articleXpath,
+                    "Cannot delete article " + articleTitle);
+        } else {
+            String removeLocator = getRemoveButtonByTitle(articleTitle);
+            this.waitForElementAndClick(removeLocator, "Cannot click button to remove article from saved\n", 10);
+        }
+
+        if (Platform.getInstance().isIOS()) {
             this.clickElementToTheRightUpperCorner(articleXpath, "Cannot find saved article.\n");
+        }
+
+        if (Platform.getInstance().isMW()) {
+            driver.navigate().refresh();
         }
         this.waitForArticleToDisappear(articleTitle);
     }
@@ -58,8 +73,7 @@ abstract public class MyListsPageObject extends MainPageObject {
                 15);
     }
 
-    public void typeMyListsSearchLine(String searchMask)
-    {
+    public void typeMyListsSearchLine(String searchMask) {
         this.waitForElementAndSendKeys(SEARCH_IN_ARTICLES, searchMask, "Cannot send keys to search input in my lists", 10);
     }
 

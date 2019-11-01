@@ -1,8 +1,8 @@
 package lib.ui;
 
-import io.appium.java_client.AppiumDriver;
 import lib.Platform;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.remote.RemoteWebDriver;
 
 abstract public class ArticlePageObject extends MainPageObject {
     protected static String
@@ -10,6 +10,7 @@ abstract public class ArticlePageObject extends MainPageObject {
             FOOTER_ELEMENT,
             OPTIONS_BUTTON,
             OPTIONS_ADD_TO_MY_LIST_BUTTON,
+            OPTIONS_REMOVE_FROM_MY_LIST_BUTTON,
             ADD_TO_MY_LIST_OVERLAY,
             CREATE_NEW_FOLDER_BUTTON,
             MY_LIST_NAME_INPUT,
@@ -17,7 +18,7 @@ abstract public class ArticlePageObject extends MainPageObject {
             CLOSE_ARTICLE_BUTTON,
             EXISTING_LIST;
 
-    public ArticlePageObject(AppiumDriver driver) {
+    public ArticlePageObject(RemoteWebDriver driver) {
         super(driver);
     }
 
@@ -38,15 +39,19 @@ abstract public class ArticlePageObject extends MainPageObject {
         WebElement titleElement = waitForTitleElement();
         if (Platform.getInstance().isAndroid())
             return titleElement.getAttribute("text");
-        else
+        else if (Platform.getInstance().isIOS())
             return titleElement.getAttribute("name");
+        else
+            return titleElement.getText();
     }
 
     public void swipeToFooter() {
         if (Platform.getInstance().isAndroid())
             this.swipeUpToFindElement(FOOTER_ELEMENT, "Cannot find the end of article", 40);
-        else
+        else if (Platform.getInstance().isIOS())
             this.swipeUpTillElementAppear(FOOTER_ELEMENT, "Cannot find the end of article", 40);
+        else
+            this.scrollWebPageTillElementNotVisible(FOOTER_ELEMENT, "Cannot find the end of article", 40);
     }
 
     public void addArticleToMyList(String nameOfFolder) {
@@ -71,17 +76,34 @@ abstract public class ArticlePageObject extends MainPageObject {
         }
     }
 
-    public void addArticlesToMySaved()
-    {
+    public void addArticlesToMySaved() {
+        if (Platform.getInstance().isMW()) {
+            removeArticleFromMySavedIfItAdded();
+        }
         this.waitForElementAndClick(OPTIONS_ADD_TO_MY_LIST_BUTTON, "Cannot find option to add article to reading list\n", 10);
     }
 
-    public void closeArticle() {
-        this.waitForElementAndClick(CLOSE_ARTICLE_BUTTON, "Cannot close article by X link", 5);
+    public void removeArticleFromMySavedIfItAdded() {
+        if (this.isElementPresent(OPTIONS_REMOVE_FROM_MY_LIST_BUTTON)) {
+            this.waitForElementAndClick(
+                    OPTIONS_REMOVE_FROM_MY_LIST_BUTTON,
+                    "Cannot click button to remove article from my saved",
+                    5
+            );
+        }
+        this.waitForElementPresent(
+                OPTIONS_ADD_TO_MY_LIST_BUTTON,
+                "Cannot find button to add an article to saved list after removing it from this list before",
+                5
+        );
     }
 
-    public void tapArticle() {
-        driver.tap(1, this.waitForTitleElement(), 1);
+    public void closeArticle() {
+        if (Platform.getInstance().isIOS() || Platform.getInstance().isAndroid())
+            this.waitForElementAndClick(CLOSE_ARTICLE_BUTTON, "Cannot close article by X link", 5);
+        else {
+            System.out.println("closeArticle() do nothing for this platform " + Platform.getInstance().getPlatformVar());
+        }
     }
 
     public void assertTitlePresent() {

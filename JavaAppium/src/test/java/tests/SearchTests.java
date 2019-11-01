@@ -55,11 +55,11 @@ public class SearchTests extends CoreTestCase {
     public void testSearchByArticleAndDescriptionInResult() {
         String searchText = "Java";
         String firstArticle = "Java";
-        String firstDescription = "Island of Indonesia";
+        String firstDescription = "sland of Indonesia";
         String secondArticle = "Java (programming language)";
-        String secondDescription = "Object-oriented programming language";
+        String secondDescription = "bject-oriented programming language";
         String thirdArticle = "JavaScript";
-        String thirdDescription = "Programming language";
+        String thirdDescription = "rogramming language";
 
         SearchPageObject SearchPageObject = SearchPageObjectFactory.get(driver);
         SearchPageObject.initSearchInput();
